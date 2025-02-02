@@ -1,19 +1,30 @@
+import { useParams } from 'react-router-dom';
+import { useSelector} from 'react-redux';
+
 import MovieInfo from "./MovieInfo" 
 function MovieDetails () {
+    const {id} = useParams()
+    const movies = useSelector((state) => state.movies.movies) || [];
+    const movie = movies.find((m) => String(m.id) === id)
+    console.log(movie);
+    
+
+    
+
     return(
         <>
             <div className="bg-[linear-gradient(to_right,rgba(255,255,255,0.08)_3.84%,rgba(0,0,0,0)_46.32%,rgba(255,255,255,0.08)_95.33%)] mx-[-231px]">
                 <div className="max-w-[1200px] m-auto py-[48px] flex">
                     <div>
                 <p className="text-[#FDD835] text-[18px] font-bold">
-                    Movie
+                    {(movie.media_type.toUpperCase())}
                 </p>
                 <h2 className="text-[#F5F5F5] text-5xl my-1.5">
-                THE LORD TO THE RINGS: THE TWO TOWERS
+                {movie.title.toUpperCase()}
                 </h2>
                 <div className="text-white text-[15px] flex gap-[15px]">
                 <span>
-                    2002
+                    {movie.release_date}
                 </span>
                 <span>
                     2h 59m
@@ -22,13 +33,13 @@ function MovieDetails () {
                 </div>
                 <div className="flex items-center gap-5 ml-auto">
                     <p className="flex gap-2 text-3xl text-white items-center">
-                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink">
 <rect width="20" height="20" fill="#1E1E1E"/>
 <g id="Find Movies - Home Page" clipPath="url(#clip0_0_1)">
 <rect width="1440" height="1133" transform="translate(-136 -505)" fill="black"/>
 <g id="Movie - cover">
 <rect id="Rectangle 11" x="-8" y="-226" width="171" height="258" rx="8" fill="url(#pattern0_0_1)"/>
-<rect id="Rectangle 13" x="-8" y="-226" width="171" height="258" rx="8" fill="black" fill-opacity="0.24"/>
+<rect id="Rectangle 13" x="-8" y="-226" width="171" height="258" rx="8" fill="black" fillOpacity="0.24"/>
 <g id="Frame 1">
 <rect width="69" height="44" transform="translate(-8 -12)" fill="black"/>
 <g id="Group 10">
@@ -55,11 +66,11 @@ function MovieDetails () {
 
 </defs>
                         </svg>
-                        8.8
+                        {movie.vote_average.toFixed(1)}
                     </p>
                     <div className="text-[13px] text-[#F5F5F599]">
                     <p>
-                        500 768
+                        {movie.vote_count}
                     </p>
                     <span>
                         ratings
@@ -69,7 +80,7 @@ function MovieDetails () {
                 </div>
             </div>
             <div className="py-7 flex gap-8">
-                <img src="" alt="" className="w-[272px] bg-gray-300" />
+                <img src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`} alt={movie.title} className="w-[272px] bg-gray-300" />
                 <div className=" w-full"> 
                     <div className="flex rounded-[8px] text-[17px border-[#FDD835] border-1">
                         <div className="bg-[#FDD835] py-2.5 pl-4 pr-6 clip-custom rounded-l-[6px]">
@@ -95,7 +106,7 @@ function MovieDetails () {
                         </div>
                     </div>
                     <p className="text-[#F5F5F5] leading-[27.2px]">
-                    The continuing quest of Frodo and the Fellowship to destroy the One Ring. Frodo and Sam discover they are being followed by the mysterious Gollum. Aragorn, the Elf archer Legolas, and Gimli the Dwarf encounter the besieged Rohan kingdom, whose once great King Theoden has fallen under Saruman's deadly spell.
+                    {movie.overview}
                     </p>
                     <MovieInfo/>
                     </div>

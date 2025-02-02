@@ -1,15 +1,17 @@
 
 import Slider from "react-slick";
 import PremierMovie from "./PremierMovie";
-import {useDispatch } from 'react-redux';
-import { fetchPremiers } from "../redux/tmdb";
+import {useDispatch, useSelector} from 'react-redux';
+import { fetchPremiers } from '../redux/premiersSlice';
 import React from "react";
 
 function Premiers () {
     const dispatch = useDispatch()
+    
+    const { premiers } = useSelector((state) => state.premiers)
 
     React.useEffect(() => {
-        dispatch(fetchPremiers)
+        dispatch(fetchPremiers())
     }, [dispatch])
    
 

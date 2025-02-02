@@ -16,7 +16,7 @@ function App() {
     <Router>
       <Routes>
         <Route path="/" element={<Home ></Home>} />
-        <Route path="/movieDetails/:moviesId" element={<MovieDetails />} />
+        <Route path="/movieDetails/:id" element={<MovieDetails />} />
         <Route path="*" element={<div>404 - Страница не найдена</div>} />
       </Routes>
     </Router>

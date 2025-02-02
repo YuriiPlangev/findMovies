@@ -13,6 +13,8 @@
     "@lottiefiles/dotlottie-react": "^0.12.3",
     "@reduxjs/toolkit": "^2.5.1",
     "@tailwindcss/vite": "^4.0.0",
+    "esbuild": "^0.24.2",
+    "lightningcss": "^1.29.1",
     "react": "^18.3.1",
     "react-content-loader": "^7.0.2",
     "react-dom": "^18.3.1",

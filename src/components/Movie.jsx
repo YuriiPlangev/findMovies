@@ -1,10 +1,12 @@
-function Movie ({item, categories}) {
+
+
+function Movie ({item, categories, onClick}) {
     
     if (!item) return null; 
 
     return (
         <>
-        <article className="max-w-[170px] h-[320px] relative cursor-pointer">
+        <article onClick={onClick} className="max-w-[170px] h-[320px] relative cursor-pointer">
                 <img src={`https://image.tmdb.org/t/p/w500${item.poster_path}`} alt={item.title} className="w-[170px] h-full object-cover rounded-lg mb-[17px]" />            
             <div className="bg-black h-[44px] w-[] absolute top-69 p-2 flex gap-1 text-white">
             <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink">
