@@ -1,9 +1,11 @@
 import Search from "./Search"
+import { Link } from "react-router-dom"
 
 function Header () {
 
 return (
     <header className="flex items-center py-7">
+        <Link to="/">
         <svg className="mr-[66px]" width="137" height="26" viewBox="0 0 137 26" fill="none" xmlns="http://www.w3.org/2000/svg">
 <rect width="137" height="26" fill="#1E1E1E"/>
 <g id="Find Movies - Home Page" clipPath="url(#clip0_0_1)">
@@ -37,6 +39,7 @@ return (
 </clipPath>
 </defs>
         </svg>
+        </Link>
         <Search/>
     </header>
 )

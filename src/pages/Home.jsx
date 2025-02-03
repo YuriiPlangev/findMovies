@@ -1,5 +1,5 @@
-import FeaturedToday from "./FeaturedToday"
-import Premiers from "./Premiers"
+import FeaturedToday from "../components/FeaturedToday"
+import Premiers from "../components/Premiers"
 function Home () {
     return (
         <>

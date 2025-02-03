@@ -1,14 +1,37 @@
 import { useParams } from 'react-router-dom';
-import { useSelector} from 'react-redux';
+import { useSelector,  useDispatch,} from 'react-redux';
 
-import MovieInfo from "./MovieInfo" 
+import React, { act } from 'react';
+import { fetchMovieDetails } from '../redux/detailsSlice';
 function MovieDetails () {
-    const {id} = useParams()
-    const movies = useSelector((state) => state.movies.movies) || [];
-    const movie = movies.find((m) => String(m.id) === id)
-    console.log(movie);
+    const { movieId } = useParams()
+    const dispatch = useDispatch()
+    const { movie, credits, loading, error } = useSelector((state) => state.details);
+    
+    
+    React.useEffect(() => {
+        console.log("📌 movieId из useParams:", movieId);
+        if (movieId) {
+            dispatch(fetchMovieDetails(movieId));
+        }
+    }, [dispatch, movieId]);
+
+    
+    if (loading) return <p>Загрузка...</p>;
+    if (error) return <p>Ошибка: {error}</p>;
+    if (!movie) return <p>Фильм не найден.</p>;
+
+    const runtime = `${Math.floor(movie.runtime/60)}h ${(movie.runtime % 60)}m`
+    const director = credits?.crew?.find((people) => people.job === "Director")
+    const writer = credits?.crew?.find((people) => people.job === "Writer" || "Writing" )
+    const actors = credits?.cast?.slice(0, 5).map((actor) => (
+        ` ${actor.name},`
+    ))
+
     
 
+    
+  
     
 
     return(
@@ -17,17 +40,17 @@ function MovieDetails () {
                 <div className="max-w-[1200px] m-auto py-[48px] flex">
                     <div>
                 <p className="text-[#FDD835] text-[18px] font-bold">
-                    {(movie.media_type.toUpperCase())}
+                    Movie
                 </p>
                 <h2 className="text-[#F5F5F5] text-5xl my-1.5">
-                {movie.title.toUpperCase()}
+                {movie.title}
                 </h2>
                 <div className="text-white text-[15px] flex gap-[15px]">
                 <span>
                     {movie.release_date}
                 </span>
                 <span>
-                    2h 59m
+                    {runtime}
                 </span>
                 </div>
                 </div>
@@ -66,7 +89,7 @@ function MovieDetails () {
 
 </defs>
                         </svg>
-                        {movie.vote_average.toFixed(1)}
+                        {movie.vote_average}
                     </p>
                     <div className="text-[13px] text-[#F5F5F599]">
                     <p>
@@ -95,20 +118,34 @@ function MovieDetails () {
                         </div>
                     </div>
                     <div className="flex gap-4 my-6">
-                        <div className="bg-[#1d1d1d] text-white py-1.5 px-2.5 border-2 rounded-[50px] border-[#373737]">
-                            Action
+                        {
+                            movie.genres.map((genre) => (
+                                <div key={genre.id} className="bg-[#1d1d1d] text-white py-1.5 px-2.5 border-2 rounded-[50px] border-[#373737]">
+                            {genre.name}
                         </div>
-                        <div className="bg-[#1d1d1d] text-white py-1.5 px-2.5 border-2 rounded-[50px] border-[#373737]">
-                            Adventure
-                        </div>
-                        <div className="bg-[#1d1d1d] text-white py-1.5 px-2.5 border-2 rounded-[50px] border-[#373737]">
-                            Drama
-                        </div>
+                            ))
+                        }
                     </div>
                     <p className="text-[#F5F5F5] leading-[27.2px]">
                     {movie.overview}
                     </p>
-                    <MovieInfo/>
+                    <div className="flex flex-col gap-3 mt-4">
+                    <p className="text-[rgba(245,245,245,0.6)]">
+                        Director: <span className='text-[#ffffff]'>{director ? director.name : ""}</span>
+                    </p>
+                    <p className="text-[rgba(245,245,245,0.6)]">
+                        Screenplay: <span className='text-[#ffffff]'>{writer ? writer.name : ""}</span>
+                    </p>
+                    <p className="text-[rgba(245,245,245,0.6)]">
+                        Stars: <span className='text-[#ffffff]'>{actors}</span>
+                    </p>
+                    <p className="text-[rgba(245,245,245,0.6)]">
+                        Countries of Origin: <span className='text-[#ffffff]'>{movie.production_countries[0] ? movie.production_countries[0].name : ""}</span>
+                    </p>
+                    <p className="text-[rgba(245,245,245,0.6)]">
+                        Release date: <span className='text-[#ffffff]'>{movie.release_date}</span>
+                    </p>
+                    </div>
                     </div>
                 </div>
             

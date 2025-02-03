@@ -4,19 +4,21 @@ import Slider from "react-slick";
 import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from 'react-redux';
 import { changeCategoriesToMovies, changeCategoriesToSeries } from "../redux/categoriesSlice"
-import { fetchMovies } from "../redux/moviesSlice";
+import { fetchMovies} from "../redux/moviesSlice"
 
 
   function FeaturedToday() {
     const categories = useSelector((state) => state.categories.category)
     const dispatch = useDispatch();
-    const { movies} = useSelector((state) => state.movies)
+    const { movies } = useSelector((state) => state.movies)
     const navigate = useNavigate();
 
 
     React.useEffect (() => {
         dispatch(fetchMovies(categories))
-    }, [categories, dispatch]);
+    }, [dispatch, categories]);
+
+
     const settings = {
         infinite: true,
         slidesToShow: 6,
@@ -46,7 +48,7 @@ import { fetchMovies } from "../redux/moviesSlice";
                 {movies.map((movie) => (
                     <Movie 
                         key={movie.id} 
-                        onClick={() => navigate(`/movieDetails/${movie.id}`)} 
+                        onClick={() => navigate(`/movie/${movie.id}`)} 
                         categories={categories} 
                         item={movie} 
                     />

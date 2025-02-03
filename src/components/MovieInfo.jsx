@@ -1,5 +1,7 @@
 function MovieInfo () {
-    const info =["Director", "Screenplay", "Stars", "Countries of Origin", "Release date"]
+    
+    const director = credits.crew.find((person) => person.job === "Director")
+    const info =[`Director ${director.name}`, "Screenplay", "Stars", "Countries of Origin", "Release date"]
     
     return (
         <div className="flex flex-col gap-3 mt-4">
