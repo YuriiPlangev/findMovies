@@ -1,65 +1,57 @@
 import { useParams } from 'react-router-dom';
-import { useSelector,  useDispatch,} from 'react-redux';
-
-import React, { act } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import React from 'react';
 import { fetchMovieDetails } from '../redux/detailsSlice';
-function MovieDetails () {
-    const { movieId } = useParams()
-    const dispatch = useDispatch()
+
+function MovieDetails() {
+    const { mediaType, movieId } = useParams();
+    const dispatch = useDispatch();
     const { movie, credits, loading, error } = useSelector((state) => state.details);
-    
-    
+
     React.useEffect(() => {
         console.log("📌 movieId из useParams:", movieId);
-        if (movieId) {
-            dispatch(fetchMovieDetails(movieId));
+        const type = movieId.startsWith("tv") ? "tv" : "movie";  // Определяем тип
+        if (movieId && mediaType) {
+            dispatch(fetchMovieDetails({ type : mediaType, movieId }));  // Передаем type
         }
-    }, [dispatch, movieId]);
+    }, [dispatch, movieId, mediaType]);
 
-    
     if (loading) return <p>Загрузка...</p>;
     if (error) return <p>Ошибка: {error}</p>;
     if (!movie) return <p>Фильм не найден.</p>;
 
-    const runtime = `${Math.floor(movie.runtime/60)}h ${(movie.runtime % 60)}m`
-    const director = credits?.crew?.find((people) => people.job === "Director")
-    const writer = credits?.crew?.find((people) => people.job === "Writer" || "Writing" )
-    const actors = credits?.cast?.slice(0, 5).map((actor) => (
-        ` ${actor.name},`
-    ))
+    const runtime = `${Math.floor(movie.runtime / 60)}h ${(movie.runtime % 60)}m`;
+    const directors = credits?.crew?.filter(
+        (person) => person.known_for_department === "Directing")
+        .slice(0,2)
+    const writers = credits?.crew?.filter(
+        (person) => person.known_for_department === "Writer" || person.known_for_department === "Writing")
+        .slice(0,2);   
+    const actors = credits?.cast?.slice(0, 5).map((actor) => `${actor.name}, `);
+    const runtimeTv = `${movie.number_of_seasons} ${movie.number_of_seasons === 1 ? "season" : "seasons"}, ${movie.number_of_episodes} ${movie.number_of_episodes === 1 ? "episode" : "episodes"}`
 
-    
-
-    
-  
-    
-
-    return(
+    return (
         <>
             <div className="bg-[linear-gradient(to_right,rgba(255,255,255,0.08)_3.84%,rgba(0,0,0,0)_46.32%,rgba(255,255,255,0.08)_95.33%)] mx-[-231px]">
                 <div className="max-w-[1200px] m-auto py-[48px] flex">
                     <div>
-                <p className="text-[#FDD835] text-[18px] font-bold">
-                    Movie
-                </p>
-                <h2 className="text-[#F5F5F5] text-5xl my-1.5">
-                {movie.title}
-                </h2>
-                <div className="text-white text-[15px] flex gap-[15px]">
-                <span>
-                    {movie.release_date}
-                </span>
-                <span>
-                    {runtime}
-                </span>
-                </div>
-                </div>
-                <div className="flex items-center gap-5 ml-auto">
-                    <p className="flex gap-2 text-3xl text-white items-center">
-                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink">
+                        <p className="text-[#FDD835] text-[18px] font-bold">
+                            {mediaType === "movie" ? "Movie" : "Series"}
+                        </p>
+                        <h2 className="text-[#F5F5F5] text-5xl my-1.5">
+                            {movie.title || movie.name}
+                        </h2>
+                        <div className="text-white text-[15px] flex gap-[15px]">
+                            <span>{movie.release_date || movie.first_air_date}</span>
+                            <span>{mediaType === "movie" ? runtime : runtimeTv}</span>
+                        </div>
+                    </div>
+                    <div className="flex items-center gap-5 ml-auto">
+                        <p className="flex gap-2 text-3xl text-white items-center">
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink">
 <rect width="20" height="20" fill="#1E1E1E"/>
 <g id="Find Movies - Home Page" clipPath="url(#clip0_0_1)">
-<rect width="1440" height="1133" transform="translate(-136 -505)" fill="black"/>
+<rect width="1440" height="1133" transform="translate(-136 -505)" fill="inherit"/>
 <g id="Movie - cover">
 <rect id="Rectangle 11" x="-8" y="-226" width="171" height="258" rx="8" fill="url(#pattern0_0_1)"/>
 <rect id="Rectangle 13" x="-8" y="-226" width="171" height="258" rx="8" fill="black" fillOpacity="0.24"/>
@@ -88,68 +80,59 @@ function MovieDetails () {
 </clipPath>
 
 </defs>
-                        </svg>
-                        {movie.vote_average}
-                    </p>
-                    <div className="text-[13px] text-[#F5F5F599]">
-                    <p>
-                        {movie.vote_count}
-                    </p>
-                    <span>
-                        ratings
-                    </span>
+                            </svg>
+
+                            {movie.vote_average}
+                        </p>
+                        <div className="text-[13px] text-[#F5F5F599]">
+                            <p>{movie.vote_count}</p>
+                            <span>ratings</span>
+                        </div>
                     </div>
-                </div>
                 </div>
             </div>
             <div className="py-7 flex gap-8">
                 <img src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`} alt={movie.title} className="w-[272px] bg-gray-300" />
-                <div className=" w-full"> 
+                <div className="w-full">
                     <div className="flex rounded-[8px] text-[17px border-[#FDD835] border-1">
                         <div className="bg-[#FDD835] py-2.5 pl-4 pr-6 clip-custom rounded-l-[6px]">
-                        <p className="text-[#212121]">
-                            Awards & nominations
-                        </p>
+                            <p className="text-[#212121]">Awards & nominations</p>
                         </div>
                         <div>
-                        <p className="text-[#F5F5F5] py-2.5">
-                            Won 2 Oscars 130 wins & 136 nominations total
-                        </p>
+                            <p className="text-[#F5F5F5] py-2.5">
+                                Won 2 Oscars 130 wins & 136 nominations total
+                            </p>
                         </div>
                     </div>
                     <div className="flex gap-4 my-6">
-                        {
-                            movie.genres.map((genre) => (
-                                <div key={genre.id} className="bg-[#1d1d1d] text-white py-1.5 px-2.5 border-2 rounded-[50px] border-[#373737]">
-                            {genre.name}
-                        </div>
-                            ))
-                        }
+                        {movie.genres.map((genre) => (
+                            <div key={genre.id} className="bg-[#1d1d1d] text-white py-1.5 px-2.5 border-2 rounded-[50px] border-[#373737]">
+                                {genre.name}
+                            </div>
+                        ))}
                     </div>
-                    <p className="text-[#F5F5F5] leading-[27.2px]">
-                    {movie.overview}
-                    </p>
+                    <p className="text-[#F5F5F5] leading-[27.2px]">{movie.overview}</p>
                     <div className="flex flex-col gap-3 mt-4">
-                    <p className="text-[rgba(245,245,245,0.6)]">
-                        Director: <span className='text-[#ffffff]'>{director ? director.name : ""}</span>
-                    </p>
-                    <p className="text-[rgba(245,245,245,0.6)]">
-                        Screenplay: <span className='text-[#ffffff]'>{writer ? writer.name : ""}</span>
-                    </p>
-                    <p className="text-[rgba(245,245,245,0.6)]">
-                        Stars: <span className='text-[#ffffff]'>{actors}</span>
-                    </p>
-                    <p className="text-[rgba(245,245,245,0.6)]">
-                        Countries of Origin: <span className='text-[#ffffff]'>{movie.production_countries[0] ? movie.production_countries[0].name : ""}</span>
-                    </p>
-                    <p className="text-[rgba(245,245,245,0.6)]">
-                        Release date: <span className='text-[#ffffff]'>{movie.release_date}</span>
-                    </p>
-                    </div>
+                        <p className="text-[rgba(245,245,245,0.6)]">
+                            Director: { directors.map((director) => <span className='text-[#ffffff]' key={director.id}>{director.name}, </span>)}
+                        </p>
+                        <p className="text-[rgba(245,245,245,0.6)]">
+                            Screenplay: { writers.map((writer) => <span className='text-[#ffffff]' key={writer.id}>{writer.name}, </span>)}
+                        </p>
+                        <p className="text-[rgba(245,245,245,0.6)]">
+                            Stars: <span className='text-[#ffffff]'>{actors}</span>
+                        </p>
+                        <p className="text-[rgba(245,245,245,0.6)]">
+                            Countries of Origin: <span className='text-[#ffffff]'>{movie.production_countries[0] ? movie.production_countries[0].name : ""}</span>
+                        </p>
+                        <p className="text-[rgba(245,245,245,0.6)]">
+                            Release date: <span className='text-[#ffffff]'>{movie.release_date || movie.first_air_date}</span>
+                        </p>
                     </div>
                 </div>
-            
+            </div>
         </>
-    )
+    );
 }
-export default MovieDetails
+
+export default MovieDetails;

@@ -6,18 +6,15 @@ import { useSelector, useDispatch } from 'react-redux';
 import { changeCategoriesToMovies, changeCategoriesToSeries } from "../redux/categoriesSlice"
 import { fetchMovies} from "../redux/moviesSlice"
 
-
-  function FeaturedToday() {
+function FeaturedToday() {
     const categories = useSelector((state) => state.categories.category)
     const dispatch = useDispatch();
     const { movies } = useSelector((state) => state.movies)
     const navigate = useNavigate();
 
-
-    React.useEffect (() => {
+    React.useEffect(() => {
         dispatch(fetchMovies(categories))
     }, [dispatch, categories]);
-
 
     const settings = {
         infinite: true,
@@ -29,7 +26,10 @@ import { fetchMovies} from "../redux/moviesSlice"
         cssEase: "linear"
     };
 
-    return (<section className="mt-[64px] relative">
+    const mediaType = categories === "Movies" ? "movie" : "tv";
+
+    return (
+        <section className="mt-[64px] relative">
             <h2 className="text-[#FDD835] text-[32px] font-bold">
                 Featured Today
             </h2>
@@ -45,20 +45,17 @@ import { fetchMovies} from "../redux/moviesSlice"
             </nav>
             <div className="slider-container">
                 <Slider {...settings}>
-                {movies.map((movie) => (
-                    <Movie 
-                        key={movie.id} 
-                        onClick={() => navigate(`/movie/${movie.id}`)} 
-                        categories={categories} 
-                        item={movie} 
-                    />
+                    {movies.map((movie) => (
+                        <Movie
+                            key={movie.id}
+                            onClick={() => navigate(`/media/${mediaType}/${movie.id}`)}
+                            categories={categories}
+                            item={movie}
+                        />
                     ))}
-                    
                 </Slider>
-                
             </div>
         </section>
-
     );
 }
 

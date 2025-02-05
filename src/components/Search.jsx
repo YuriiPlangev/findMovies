@@ -1,4 +1,8 @@
+import React from "react"
+import SearchResults from "./SearchResults"
+
 function Search () {
+    const [] = React.useState()
 
     return(
         <div className="relative">
@@ -14,8 +18,8 @@ function Search () {
 </clipPath>
 </defs>
         </svg>
-
         </button>
+        <SearchResults/>
         </div>
     )
 
