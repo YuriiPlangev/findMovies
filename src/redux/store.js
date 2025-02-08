@@ -3,6 +3,8 @@ import categoriesReducer from "./categoriesSlice"
 import moviesReducer from '../redux/moviesSlice'
 import premiersReducer from '../redux/premiersSlice';
 import detailsReducer from '../redux/detailsSlice'
+import searchReducer from '../redux/searchSlice'
+import similarSlice from "./similarSlice"; // Импортируем
 
 const store = configureStore({
   reducer: {
@@ -10,6 +12,8 @@ const store = configureStore({
     movies: moviesReducer,
     premiers : premiersReducer,
     details : detailsReducer,
+    search: searchReducer,
+    similar: similarSlice.reducer,
   }
 });
 

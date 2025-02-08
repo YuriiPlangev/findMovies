@@ -15,7 +15,7 @@ function Premiers () {
     React.useEffect(() => {
         dispatch(fetchPremiers())
     }, [dispatch])
-    console.log(premiers);
+    
     const settings = {
         infinite: true,
         slidesToShow: 6,

@@ -11,7 +11,9 @@ export const fetchMovies = createAsyncThunk(
             } else if (category === "Series") {
                 data = await getTrendingMovies("tv"); 
             }
+            console.log(data);
             return data;
+            
         } catch (err) {
             return thunkAPI.rejectWithValue(`Error: ${err}`);
         }

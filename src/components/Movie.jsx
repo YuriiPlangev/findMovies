@@ -45,7 +45,7 @@ function Movie ({item, categories, onClick}) {
                 <span>{item.vote_average.toFixed(1)}</span>
             </div>
         </article>
-        <h3 className="text-center text-white mt-[20px]">{categories === "Movies" ? item.title : item.name}</h3>
+        <h3 className="text-center text-white mt-[20px]">{item.title || item.name}</h3>
     </>
         
     )
