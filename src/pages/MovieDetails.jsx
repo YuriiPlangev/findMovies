@@ -3,51 +3,77 @@ import { useSelector, useDispatch } from 'react-redux';
 import React from 'react';
 import { fetchMovieDetails } from '../redux/detailsSlice';
 import Similar from '../components/Similar';
+import Trailer from '../components/Trailer';
+import DetailsSkeleton from '../skeletons/DetailsSkeleton';
+import { useTranslation } from "react-i18next";
+
+
 
 function MovieDetails() {
+    const { t } = useTranslation();
     const { mediaType, movieId } = useParams();
     const dispatch = useDispatch();
     const { movie, credits, loading, error } = useSelector((state) => state.details);
 
     React.useEffect(() => {
         console.log("📌 movieId из useParams:", movieId);
-        const type = movieId.startsWith("tv") ? "tv" : "movie";  // Определяем тип
+        const type = movieId.startsWith("tv") ? "tv" : "movie"; 
         if (movieId && mediaType) {
-            dispatch(fetchMovieDetails({ type : mediaType, movieId }));  // Передаем type
+            dispatch(fetchMovieDetails({ type : mediaType, movieId })); 
         }
     }, [dispatch, movieId, mediaType]);
 
-    if (loading) return <p>Загрузка...</p>;
-    if (error) return <p>Ошибка: {error}</p>;
+    if (loading) return <DetailsSkeleton />;
+    if (error) return <p>{error}</p>;
     if (!movie) return <p>Фильм не найден.</p>;
 
     const runtime = `${Math.floor(movie.runtime / 60)}h ${(movie.runtime % 60)}m`;
-    const directors = credits?.crew?.filter(
-        (person) => person.known_for_department === "Directing")
-        .slice(0,2)
-    const writers = credits?.crew?.filter(
-        (person) => person.known_for_department === "Writer" || person.known_for_department === "Writing")
-        .slice(0,2);   
-    const actors = credits?.cast?.slice(0, 5).map((actor) => `${actor.name}, `);
+    const directors = [...new Set(
+        credits?.crew
+            ?.filter(person => person.known_for_department === "Directing")
+            .map(person => person.name)
+    )]
+    .slice(0, 2)
+    .join(', '); 
+    
+    const writers = [...new Set(
+        credits?.crew
+            ?.filter(person => person.known_for_department === "Writer" || person.known_for_department === "Writing")
+            .map(person => person.name)
+    )]
+    .slice(0, 2)
+    .join(', ');
+
+    const actors = [...new Set(credits?.cast?.map(actor => actor.name))]
+        .slice(0, 5) 
+        .join(', ');
     const runtimeTv = `${movie.number_of_seasons} ${movie.number_of_seasons === 1 ? "season" : "seasons"}, ${movie.number_of_episodes} ${movie.number_of_episodes === 1 ? "episode" : "episodes"}`
 
+    const typeMedia = mediaType === "movie" ? t("movie"): t("tv");
+    
+    
     return (
         <>
             <div className="bg-[linear-gradient(to_right,rgba(255,255,255,0.08)_3.84%,rgba(0,0,0,0)_46.32%,rgba(255,255,255,0.08)_95.33%)] mx-[-231px]">
                 <div className="max-w-[1200px] m-auto py-[48px] flex">
                     <div>
                         <p className="text-[#FDD835] text-[18px] font-bold">
-                            {mediaType === "movie" ? "Movie" : "Series"}
+                            {typeMedia}
                         </p>
                         <h2 className="text-[#F5F5F5] text-5xl my-1.5">
                             {movie.title || movie.name}
                         </h2>
                         <div className="text-white text-[15px] flex gap-[15px]">
                             <span>{movie.release_date || movie.first_air_date}</span>
-                            <span>{mediaType === "movie" ? runtime : runtimeTv}</span>
+                            {
+                                movie.vote_count > 1 &&
+                                <span>{mediaType === "movie" ? runtime : runtimeTv}</span>
+                            }
+                            
                         </div>
                     </div>
-                    <div className="flex items-center gap-5 ml-auto">
+                    {movie.vote_count > 1 &&
+                     <div className="flex items-center gap-5 ml-auto">
                         <p className="flex gap-2 text-3xl text-white items-center">
                         <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink">
                                 <rect width="20" height="20" fill="#1E1E1E"/>
@@ -87,15 +113,17 @@ function MovieDetails() {
                         </p>
                         <div className="text-[13px] text-[#F5F5F599]">
                             <p>{movie.vote_count}</p>
-                            <span>ratings</span>
+                            <span>{t("ratings")}</span>
                         </div>
                     </div>
+                    }
+                    
                 </div>
             </div>
             <div className="py-7 flex gap-8">
                 <img src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`} alt={movie.title} className="w-[272px] bg-gray-300" />
                 <div className="w-full">
-                    <div className="flex rounded-[8px] text-[17px border-[#FDD835] border-1">
+                    {/* <div className="flex rounded-[8px] text-[17px border-[#FDD835] border-1">
                         <div className="bg-[#FDD835] py-2.5 pl-4 pr-6 clip-custom rounded-l-[6px]">
                             <p className="text-[#212121]">Awards & nominations</p>
                         </div>
@@ -104,10 +132,10 @@ function MovieDetails() {
                                 Won 2 Oscars 130 wins & 136 nominations total
                             </p>
                         </div>
-                    </div>
-                    <div className="flex gap-4 my-6">
+                    </div> */}
+                    <div className="flex gap-4 mb-6">
                         {movie.genres.map((genre) => (
-                            <div key={genre.id} className="bg-[#1d1d1d] text-white py-1.5 px-2.5 border-2 rounded-[50px] border-[#373737]">
+                            <div key={genre.id} className="bg-[#1d1d1d] text-white py-1.5 px-2.5 border-2 rounded-[50px] border-[#FDD835]">
                                 {genre.name}
                             </div>
                         ))}
@@ -115,24 +143,22 @@ function MovieDetails() {
                     <p className="text-[#F5F5F5] leading-[27.2px]">{movie.overview}</p>
                     <div className="flex flex-col gap-3 mt-4">
                         <p className="text-[rgba(245,245,245,0.6)]">
-                            Director: { directors.map((director) => <span className='text-[#ffffff]' key={director.id}>{director.name}</span>)}
+                            {t("director")}:<span className='text-[#ffffff]'> {directors || "Sorry, no information about the Director."}</span>
                         </p>
                         <p className="text-[rgba(245,245,245,0.6)]">
-                            Screenplay: { writers.map((writer) => <span className='text-[#ffffff]' key={writer.id}>{writer.name}, </span>)}
+                            {t("screenplay")}: <span className='text-[#ffffff]'> {writers || "Sorry, no information about the screenwriter.."}</span>
                         </p>
                         <p className="text-[rgba(245,245,245,0.6)]">
-                            Stars: <span className='text-[#ffffff]'>{actors}</span>
+                            {t("stars")}: <span className='text-[#ffffff]'>{actors}</span>
                         </p>
                         <p className="text-[rgba(245,245,245,0.6)]">
-                            Countries of Origin: <span className='text-[#ffffff]'>{movie.production_countries[0] ? movie.production_countries[0].name : ""}</span>
+                            {t("countries_of_origin")}: <span className='text-[#ffffff]'>{movie.production_countries[0] ? movie.production_countries[0].name : ""}</span>
                         </p>
                         <p className="text-[rgba(245,245,245,0.6)]">
-                            Release date: <span className='text-[#ffffff]'>{movie.release_date || movie.first_air_date}</span>
-                        </p>
-                        <p className="text-white cursor-pointer">
-                            Watch trailer
+                            {t("release_date")}: <span className='text-[#ffffff]'>{movie.release_date || movie.first_air_date}</span>
                         </p>
                     </div>
+                    <Trailer id={movieId} type={mediaType}/>
                 </div>
                 
             </div>

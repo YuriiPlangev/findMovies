@@ -4,7 +4,7 @@
   font-weight: 400;
 
   color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
+  color: white;
   background-color: #000000;
 
   font-synthesis: none;
@@ -45,11 +45,16 @@ button {
   a:hover {
     color: #747bff;
   }
-  button {
-    background-color: #f9f9f9;
-  }
+
 
   .clip-custom {
     clip-path: polygon(100% 0, 90% 100%, 0% 100%, 0 51%, 0% 0%);
+  }
+  .swiper {
+    height: 430px;
+  }
+  .css-1xcmt9q-MuiSlider-thumb {
+    width: 15px !important;
+    height: 15px !important;
   }
 }

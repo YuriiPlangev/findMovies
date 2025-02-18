@@ -1,63 +1,83 @@
-import React from "react"
-import SearchResults from "./SearchResults"
+import React from "react";
+import SearchResults from "./SearchResults";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchSearchResults } from "../redux/searchSlice";
+import { fetchMovieDetails } from "../redux/detailsSlice";
 import { useNavigate } from "react-router-dom";
 import { useLocation } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
-function Search () {
-    const [query, setQuery] = React.useState("")
+
+
+function Search() {
+    const { t } = useTranslation();
+    const [query, setQuery] = React.useState("");
     const dispatch = useDispatch();
     const { searchResults, status } = useSelector((state) => state.search);
-    const navigate = useNavigate()
-    const [showResults, setShowResults] = React.useState(false)
-    const searchRef = React.useRef(null)
-    const location = useLocation()
+    const navigate = useNavigate();
+    const [showResults, setShowResults] = React.useState(false);
+    const searchRef = React.useRef(null);
+    const location = useLocation();
 
 
+    const [movieCredits, setMovieCredits] = React.useState({});
 
-function showSearchResults (movie, type) {
-          navigate(`/media/${type}/${movie.id}`)
-            setShowResults(true)
-    }
+    React.useEffect(() => {
+        if (status === "succeeded" && searchResults.length > 0) {
+            searchResults.forEach(async (movie) => {
+                if (!movieCredits[movie.id]) {
+                    const result = await dispatch(fetchMovieDetails({ movieId: movie.id, type: movie.media_type })).unwrap();
+                    setMovieCredits((prev) => ({
+                        ...prev,
+                        [movie.id]: result.credits.cast.slice(0, 2).map((actor) => actor.name).join(", ")
+                    }));
+                }
+            });
+        }
+    }, [status, searchResults, dispatch]);
 
-const handleSearch = () => {
-    if (query.trim() !== "") {
-      dispatch(fetchSearchResults(query));
-      setShowResults(true)
-    }
-  };
+    const handleSearch = () => {
+        if (query.trim() !== "") {
+            dispatch(fetchSearchResults(query));
+            setShowResults(true);
+        }
+    };
 
-React.useEffect(() => {
-    setShowResults(false);
-    setQuery("")
-}, [location.pathname]);  
+    const handleMovieClick = (movie, type) => {
+        navigate(`/media/${type}/${movie.id}`);
+        setShowResults(false);
+    };
 
-React.useEffect(() => {
-  function handleClickOutside(event) {
-      if (searchRef.current && !searchRef.current.contains(event.target)) {
-          setShowResults(false);
-      }
-  }
+    React.useEffect(() => {
+        setShowResults(false);
+        setQuery("");
+    }, [location.pathname]);
 
-  document.addEventListener("mousedown", handleClickOutside);
-  return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-  };
-}, []);
+    React.useEffect(() => {
+        function handleClickOutside(event) {
+            if (searchRef.current && !searchRef.current.contains(event.target)) {
+                setShowResults(false);
+            }
+        }
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, []);
 
-    return(
+    return (
         <div ref={searchRef}>
-          <div className="relative z-50">
-            <input 
-            onKeyDown={(e) => e.key === "Enter" && handleSearch()} 
-            onChange={(e) => setQuery(e.target.value)} 
-            value={query} 
-            type="text" 
-            placeholder="Search FindMovies" 
-            className="bg-white px-[36px] py-2 rounded-sm w-[1000px] "/>
-            <button onClick={handleSearch} className="absolute left-2 top-3">
-            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <div className="relative z-50">
+                <input
+                    onKeyDown={(e) => e.key === "Enter" && handleSearch()}
+                    onChange={(e) => setQuery(e.target.value)}
+                    value={query}
+                    type="text"
+                    placeholder={t("search_placeholder")}
+                    className="bg-white px-[36px] py-2 rounded-lg w-[1000px]"
+                />
+                <button onClick={handleSearch} className="absolute left-3 top-[11px]">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
   <g clipPath="url(#clip0_15_215)">
   <path fillRule="evenodd" clipRule="evenodd" d="M8.75 1.66666C7.62049 1.66675 6.50738 1.93696 5.50354 2.45473C4.49971 2.97251 3.63424 3.72284 2.97936 4.64312C2.32448 5.5634 1.89917 6.62695 1.73892 7.74503C1.57867 8.86311 1.68812 10.0033 2.05815 11.0705C2.42817 12.1377 3.04804 13.1009 3.86603 13.8798C4.68402 14.6587 5.67642 15.2306 6.76043 15.548C7.84443 15.8653 8.98862 15.9189 10.0975 15.7041C11.2064 15.4893 12.2479 15.0125 13.135 14.3133L16.1783 17.3567C16.3355 17.5085 16.546 17.5925 16.7645 17.5906C16.983 17.5887 17.192 17.501 17.3465 17.3465C17.501 17.192 17.5887 16.983 17.5906 16.7645C17.5925 16.546 17.5085 16.3355 17.3567 16.1783L14.3133 13.135C15.1367 12.0905 15.6493 10.8353 15.7926 9.51309C15.9359 8.19087 15.704 6.85501 15.1235 5.6584C14.543 4.4618 13.6374 3.45279 12.5102 2.74685C11.3831 2.04091 10.08 1.66657 8.75 1.66666ZM3.33333 8.74999C3.33333 7.3134 3.90401 5.93565 4.91984 4.91983C5.93566 3.90401 7.31341 3.33332 8.75 3.33332C10.1866 3.33332 11.5643 3.90401 12.5802 4.91983C13.596 5.93565 14.1667 7.3134 14.1667 8.74999C14.1667 10.1866 13.596 11.5643 12.5802 12.5802C11.5643 13.596 10.1866 14.1667 8.75 14.1667C7.31341 14.1667 5.93566 13.596 4.91984 12.5802C3.90401 11.5643 3.33333 10.1866 3.33333 8.74999Z" fill="black" fillOpacity="0.6"/>
   </g>
@@ -67,23 +87,28 @@ React.useEffect(() => {
   </clipPath>
   </defs>
             </svg>
-            </button>
-          </div>
-        <div className="flex flex-col absolute max-h-[400px] overflow-auto top-[75px] w-full max-w-[1000px] rounded-lg">
-      {
-         status === "succeeded" && searchResults.length === 0
-         ? <p className="bg-[#212121] py-6 px-3 text-white">No results found for “{query}” phrase.</p>
-         : (
-          status === "succeeded" && showResults && (
-            searchResults?.map((movie) => (
-              <SearchResults onClick={() => showSearchResults(movie, movie.media_type)} query={query} searchResults={searchResults} key={movie.id} movie={movie}/>
-          ))
-          )
-        )}
-      </div>
-      </div>
-    )
-
+                  </button>
+            </div>
+            <div className="flex flex-col absolute max-h-[400px] overflow-auto top-[75px] w-full max-w-[1000px] rounded-lg">
+                {status === "succeeded" && searchResults.length === 0 ? (
+                    <p className="bg-[#212121] py-6 px-3 text-white">
+                        {t("search_not_found", {query})}
+                    </p>
+                ) : (
+                    status === "succeeded" &&
+                    showResults &&
+                    searchResults.map((movie) => (
+                        <SearchResults
+                            key={movie.id}
+                            movie={movie}
+                            onClick={() => handleMovieClick(movie, movie.media_type)}
+                            actors={movieCredits[movie.id]}
+                        />
+                    ))
+                )}
+            </div>
+        </div>
+    );
 }
-export default Search
 
+export default Search;

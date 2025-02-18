@@ -4,7 +4,11 @@ import moviesReducer from '../redux/moviesSlice'
 import premiersReducer from '../redux/premiersSlice';
 import detailsReducer from '../redux/detailsSlice'
 import searchReducer from '../redux/searchSlice'
-import similarSlice from "./similarSlice"; // Импортируем
+import similarSlice from "./similarSlice"; 
+import trailerReducer from "./trailerSlice";
+import genresSlice from "./genreSlice";
+import filteredReducer from './filteredSlice';
+import releaseYearsReducer from './ReleaseYearSlice'
 
 const store = configureStore({
   reducer: {
@@ -14,6 +18,10 @@ const store = configureStore({
     details : detailsReducer,
     search: searchReducer,
     similar: similarSlice.reducer,
+    trailer : trailerReducer,
+    genres : genresSlice,
+    filtered: filteredReducer,
+    years: releaseYearsReducer,
   }
 });
 

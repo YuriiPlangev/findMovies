@@ -28,16 +28,26 @@ export const fetchMostSimilar = createAsyncThunk(
 const similarSlice = createSlice({
     name: "similar",
     initialState: {
-        similar: [], // Убеждаемся, что начальное значение — массив, а не undefined
+        similar: [],
+        loading: true,
+        error: null
     },
     reducers: {},
     extraReducers: (builder) => {
-        builder.addCase(fetchMostSimilar.fulfilled, (state, action) => {
-            console.log("🟢 Redux обновил similar:", action.payload);
-            state.similar = action.payload; // Проверяем, записывает ли Redux данные
-        });
+        builder
+            .addCase(fetchMostSimilar.pending, (state) => {
+                state.loading = true;
+            })
+            .addCase(fetchMostSimilar.fulfilled, (state, action) => {
+                state.similar = action.payload;
+                state.loading = false;
+            })
+            .addCase(fetchMostSimilar.rejected, (state) => {
+                state.loading = false;
+            });
     }
 });
+
 
 
 export default similarSlice;

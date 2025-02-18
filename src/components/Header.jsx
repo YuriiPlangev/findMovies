@@ -1,7 +1,15 @@
 import Search from "./Search"
 import { Link } from "react-router-dom"
+import "../i18next"
+import { useTranslation } from "react-i18next"
 
 function Header () {
+    const { i18n} = useTranslation();
+
+  const changeLanguage = (lang) => {
+    i18n.changeLanguage(lang);
+    localStorage.setItem('i18nextLng', lang);
+  };
 
 return (
     <header className="flex items-center py-7 relative z-10">
@@ -41,6 +49,8 @@ return (
         </svg>
         </Link>
         <Search/>
+        <button onClick={() => changeLanguage('en')}>🇬🇧 English</button>
+      <button onClick={() => changeLanguage('ua')}>🇺🇦 Українська</button>
     </header>
 )
 

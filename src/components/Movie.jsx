@@ -7,7 +7,7 @@ function Movie ({item, categories, onClick}) {
     return (
         <>
         <article onClick={onClick} className="max-w-[170px] h-[320px] relative cursor-pointer">
-                <img src={`https://image.tmdb.org/t/p/w500${item.poster_path}`} alt={item.title} className="w-[170px] h-full object-cover rounded-lg mb-[17px]" />            
+                <img src={`https://image.tmdb.org/t/p/w500${item.poster_path}`} alt={item.title} className="w-[170px] h-full object-cover rounded-lg" />            
             <div className="bg-black h-[44px] w-[] absolute top-69 p-2 flex gap-1 text-white rounded-tr-lg">
             <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink">
 <rect width="20" height="20" fill="#1E1E1E"/>
@@ -44,8 +44,8 @@ function Movie ({item, categories, onClick}) {
                 </svg>
                 <span>{item.vote_average.toFixed(1)}</span>
             </div>
+            <h3 className="text-center text-white mt-[8px] pr-7">{item.title || item.name}</h3>
         </article>
-        <h3 className="text-center text-white mt-[20px]">{item.title || item.name}</h3>
     </>
         
     )

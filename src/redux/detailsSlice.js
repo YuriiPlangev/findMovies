@@ -6,13 +6,12 @@ export const fetchMovieDetails = createAsyncThunk(
     "details/fetchMovieDetails",
     async ({ type, movieId }, thunkApi) => {
         try {
-            console.log("🔍 Запрашиваем", type, "с ID:", movieId);
+           
             
             const details = await getMovieDetails(movieId, type);
             const credits = await getMovieCredits(movieId, type);
             
-            console.log("✅ Получены данные о", type, ":", details);
-            console.log("✅ Получены данные о касте:", credits);
+            
             
             return { details, credits };
         } catch (error) {
@@ -35,12 +34,12 @@ const detailsSlice = createSlice({
       builder
         .addCase(fetchMovieDetails.pending, (state) => {
           state.loading = true;
-          state.error = null;  // Сбрасываем ошибку перед новым запросом
+          state.error = null;
         })
         .addCase(fetchMovieDetails.fulfilled, (state, action) => {
           state.loading = false;
-          state.movie = action.payload.details || null;  // Обновляем состояние movie
-          state.credits = action.payload.credits || null; // Обновляем данные о касте
+          state.movie = action.payload.details || null;
+          state.credits = action.payload.credits || null;
         })
         .addCase(fetchMovieDetails.rejected, (state, action) => {
           state.loading = false;
