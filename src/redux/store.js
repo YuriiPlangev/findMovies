@@ -1,28 +1,17 @@
 import { configureStore } from '@reduxjs/toolkit';
 import categoriesReducer from "./categoriesSlice"
-import moviesReducer from '../redux/moviesSlice'
-import premiersReducer from '../redux/premiersSlice';
-import detailsReducer from '../redux/detailsSlice'
-import searchReducer from '../redux/searchSlice'
-import similarSlice from "./similarSlice"; 
-import trailerReducer from "./trailerSlice";
-import genresSlice from "./genreSlice";
-import filteredReducer from './filteredSlice';
-import releaseYearsReducer from './ReleaseYearSlice'
+import releaseYearsReducer from './ReleaseYearSlice';
+
+import { movieApi } from "./movieApi";
 
 const store = configureStore({
   reducer: {
     categories : categoriesReducer,
-    movies: moviesReducer,
-    premiers : premiersReducer,
-    details : detailsReducer,
-    search: searchReducer,
-    similar: similarSlice.reducer,
-    trailer : trailerReducer,
-    genres : genresSlice,
-    filtered: filteredReducer,
+    [movieApi.reducerPath]: movieApi.reducer,
     years: releaseYearsReducer,
-  }
+  },
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware().concat(movieApi.middleware),
 });
 
 export default store;

@@ -1,81 +1,75 @@
-import { useSelector, useDispatch } from "react-redux";
-import { fetchGenres } from '../redux/genreSlice';
-import { useEffect, useState, useRef } from "react";
+import { useState, useRef } from "react";
+import { useSelector } from "react-redux";
+import { useGetGenresQuery } from "../redux/movieApi"; // ✅ Используем RTK Query
 import TopRated from "../components/TopRated";
 import FilterNav from "../components/FilterNav";
 import YearsSlider from "../components/YearsSlider";
 
 function FilterByCategory() {
-    const dispatch = useDispatch();
-    const { movieGenres, seriesGenres } = useSelector((state) => state.genres);
+    const categories = useSelector((state) => state.categories.category);
     const [selectedGenres, setSelectedGenres] = useState([]);
     const [showGenres, setShowGenres] = useState(false);
     const [showYears, setShowYears] = useState(false);
-    const categories = useSelector((state) => state.categories.category);
+    const genresRef = useRef(null);
 
-    const genresRef = useRef(null); 
+    const { data, isLoading, error } = useGetGenresQuery();
 
-    const handleShowGenres = () => {
-        setShowGenres(!showGenres);
+    const toggleGenres = () => {
+        setShowGenres((prev) => !prev);
         setShowYears(false);
     };
 
-    const handleShowYears = () => {
-        setShowYears(!showYears);
+    const toggleYears = () => {
+        setShowYears((prev) => !prev);
         setShowGenres(false);
     };
 
-    const handleMovieGenreClick = (genre_id) => {
-        setSelectedGenres((prevGenres) =>
-            prevGenres.includes(genre_id)
-                ? prevGenres.filter((id) => id !== genre_id)
-                : [...prevGenres, genre_id]
+    const handleGenreClick = (genre_id) => {
+        setSelectedGenres((prev) =>
+            prev.includes(genre_id) ? prev.filter((id) => id !== genre_id) : [...prev, genre_id]
         );
     };
 
-    useEffect(() => {
-        dispatch(fetchGenres());
-        function handleClickOutside(event) {
-            if (genresRef.current && !genresRef.current.contains(event.target)) {
-                setShowGenres(false);  
-            }
-        }
-        document.addEventListener("mousedown", handleClickOutside);
-        return () => {
-            document.removeEventListener("mousedown", handleClickOutside);
-        };
-    }, [dispatch]);
+    const genres = categories === "Movies" ? data?.movieGenres?.genres || [] : data?.seriesGenres?.genres || [];
 
     return (
         <>
             <FilterNav
-                handleShowGenres={handleShowGenres}
+                handleShowGenres={toggleGenres}
                 showGenres={showGenres}
-                handleShowYears={handleShowYears}
+                handleShowYears={toggleYears}
                 showYears={showYears}
                 setShowYears={setShowYears}
-                onCategoryChange={() => {
-                    setSelectedGenres([]);
-                }}
+                onCategoryChange={() => setSelectedGenres([])}
             />
 
             <div
-                ref={genresRef}   
-                className={`absolute left-[700px] z-1000 rounded-[8px] bg-gray-800 border-[#FDD835] max-w-[350px] text-center ${showGenres ? "border-1" : ""}`}
+                ref={genresRef}
+                className={`absolute left-[700px] z-1000 rounded-[8px] bg-gray-800 border-[#FDD835] max-w-[350px] text-center ${showGenres ? "border" : ""}`}
             >
-                <ul className={`grid grid-cols-2 ${showGenres ? "block" : "hidden"}`}>
-                    {(categories === "Movies" ? movieGenres : seriesGenres).map((genre) => (
-                        <li
-                            key={genre.id}
-                            onClick={() => handleMovieGenreClick(genre.id)}
-                            className={`p-2 cursor-pointer ${selectedGenres.includes(genre.id) ? "text-[#FDD835] font-bold" : "text-white"}`}
-                        >
-                            {genre.name}
-                        </li>
-                    ))}
-                </ul>
+                {isLoading ? (
+                    <p className="text-white p-2">Загрузка...</p>
+                ) : error ? (
+                    <p className="text-red-500 p-2">Ошибка загрузки жанров</p>
+                ) : (
+                    <ul className={`grid grid-cols-2 ${showGenres ? "block" : "hidden"}`}>
+                        {genres.map((genre) => (
+                            <li
+                                key={genre.id}
+                                onClick={() => handleGenreClick(genre.id)}
+                                className={`p-2 cursor-pointer ${
+                                    selectedGenres.includes(genre.id) ? "text-[#FDD835] font-bold" : "text-white"
+                                }`}
+                            >
+                                {genre.name}
+                            </li>
+                        ))}
+                    </ul>
+                )}
             </div>
+
             <YearsSlider setShowYears={setShowYears} showYears={showYears} />
+
             <TopRated selectedGenres={selectedGenres} />
         </>
     );

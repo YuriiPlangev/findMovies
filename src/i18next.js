@@ -37,6 +37,7 @@ i18n
         "search_placeholder" : "Search",
         "loading" : "Loading...",
         "show_more" : "Show more",
+        "loading_actors" : "Loading actors...",
       }
     },
     ua: {
@@ -68,6 +69,7 @@ i18n
         "search_placeholder" : "Пошук",
         "loading" : "Завантаження...",
         "show_more" : "Показати більше",
+        "loading_actors" : "Завантаження акторів...",
         
       }
     }

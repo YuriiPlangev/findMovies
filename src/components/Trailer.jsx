@@ -1,26 +1,14 @@
-import { useDispatch, useSelector } from "react-redux";
-import { fetchTrailer } from "../redux/trailerSlice";
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-
-
+import { useGetVideoQuery } from "../redux/movieApi"; 
 
 function Trailer({ id, type }) {
     const { t } = useTranslation();
-    const dispatch = useDispatch();
-    const { trailer, status } = useSelector((state) => state.trailer);
     const [showTrailer, setShowTrailer] = useState(false);
-    const [hasTrailer, setHasTrailer] = useState(false);
 
-    useEffect(() => {
-        const loadTrailer = async () => {
-            const result = await dispatch(fetchTrailer({ id, type }));
-            if (result.payload?.length > 0) {
-                setHasTrailer(true);
-            }
-        };
-        loadTrailer();
-    }, [dispatch, id, type]);
+    const { data, isLoading } = useGetVideoQuery({ id, type }, { skip: !id });
+    const trailer = data?.results?.find(video => video.type === "Trailer" && video.site === "YouTube");
+
 
     const handleGetTrailer = () => {
         setShowTrailer(true);
@@ -49,17 +37,9 @@ function Trailer({ id, type }) {
 
     return (
         <>
-            {hasTrailer && (
-                <button
-                    onClick={handleGetTrailer}
-                    className="text-white cursor-pointer active:scale-[0.9] border-[#FDD835] border-1 rounded-lg py-2 px-3 mt-2 inline-flex items-center gap-2"
-                >
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 24 24"
-                        fill="currentColor"
-                        className="w-5 h-5"
-                    >
+            {trailer && (
+                <button onClick={handleGetTrailer} className="text-white cursor-pointer active:scale-[0.9] border-[#FDD835] border-1 rounded-lg py-2 px-3 mt-2 inline-flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
                         <path d="M8 5v14l11-7z" />
                     </svg>
                     {t("watch_trailer")}
@@ -69,25 +49,22 @@ function Trailer({ id, type }) {
             {showTrailer && (
                 <div className="absolute inset-0 flex items-center justify-center bg-[rgba(0,0,0,0.9)] bg-opacity-30 z-100">
                     <div className="bg-[#FDD835] p-[2px] rounded-lg relative w-[80%] max-w-2xl">
-                        <button
-                            onClick={closeModal}
-                            className="absolute top-[-10px] right-[-150px] text-[35px] hover:text-[#FDD835] text-white"
-                        >
+                        <button onClick={closeModal} className="absolute top-[-10px] right-[-150px] text-[35px] hover:text-[#FDD835] text-white">
                             ✖
                         </button>
 
-                        {status === "succeeded" && trailer.length > 0 ? (
+                        {isLoading ? (
+                            <p className="text-center">{t("loading_trailer")}</p>
+                        ) : (
                             <iframe
                                 className="rounded-lg"
                                 width="100%"
                                 height="400"
-                                src={`https://www.youtube.com/embed/${trailer[0].key}`}
+                                src={`https://www.youtube.com/embed/${trailer?.key}`}
                                 title="Trailer"
                                 frameBorder="0"
                                 allowFullScreen
                             ></iframe>
-                        ) : (
-                            <p className="text-center">{t("loading_trailer")}</p>
                         )}
                     </div>
                 </div>
