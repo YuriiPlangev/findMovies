@@ -1,11 +1,11 @@
 import './App.css';
 import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
-import Header from "./components/Header";
-import MovieDetails from './pages/MovieDetails';
-import Home from './pages/Home';
-import FilterByCategory from './pages/FilterByCategory';
-import ErrorBoundary from './pages/ErrorPage';
-import Footer from './components/Footer';
+import Header from "../components/Header";
+import MovieDetails from '../pages/MovieDetails';
+import Home from '../pages/Home';
+import FilterByCategory from '../pages/FilterByCategory';
+import ErrorBoundary from '../pages/ErrorPage';
+import Footer from '../components/Footer';
 
 function App() {
   return (

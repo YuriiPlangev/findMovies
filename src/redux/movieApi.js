@@ -70,9 +70,9 @@ export const movieApi = createApi({
     getSimilar: builder.query({
       query: ({ id, type }) => `/${type}/${id}/similar?language=${i18n.language}`,
     }),
-
-    getMovieCredits: builder.query({
-      query: (movieId) => `/movie/${movieId}/credits?language=${i18n.language}`,
+    
+    getCredits: builder.query({
+      query: ( {type, id}) => `/${type}/${id}/credits?language=${i18n.language}`,
   }),
 
     getFiltered: builder.query({
@@ -98,5 +98,5 @@ export const {
   useGetVideoQuery,
   useGetSimilarQuery,
   useGetFilteredQuery,
-  useGetMovieCreditsQuery,
+  useGetCreditsQuery,
 } = movieApi;

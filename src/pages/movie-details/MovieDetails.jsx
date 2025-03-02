@@ -1,11 +1,11 @@
 import { useParams } from "react-router-dom";
 import React, { useEffect } from "react";
-import Similar from "../components/Similar";
-import Trailer from "../components/Trailer";
-import DetailsSkeleton from "../skeletons/DetailsSkeleton";
+import Similar from "../../components/Similar";
+import Trailer from "../../components/Trailer";
+import DetailsSkeleton from "../../skeletons/DetailsSkeleton";
 import { useTranslation } from "react-i18next";
 import i18n from "i18next";
-import { useGetMovieDetailsQuery } from "../redux/movieApi"; // ✅ Используем RTK Query
+import { useGetMovieDetailsQuery } from "../../redux/movieApi"; // ✅ Используем RTK Query
 
 function MovieDetails() {
     const { t } = useTranslation();
@@ -58,6 +58,9 @@ function MovieDetails() {
         </div>
     ));
 
+
+    console.log(movie.credits);
+    
     return (
         <>
             <div className="bg-[linear-gradient(to_right,rgba(255,255,255,0.08)_3.84%,rgba(0,0,0,0)_46.32%,rgba(255,255,255,0.08)_95.33%)] mx-[-231px]">

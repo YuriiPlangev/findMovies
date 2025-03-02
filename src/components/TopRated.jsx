@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useState, useEffect } from "react";
 import Movie from '../components/Movie';
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -12,6 +12,8 @@ function TopRated({ selectedGenres }) {
     const categories = useSelector((state) => state.categories.category);
     
     const [page, setPage] = useState(1);
+    const [movies, setMovies] = useState([]); // Храним загруженные страницы
+    const [hasMore, setHasMore] = useState(true);
 
     const { data, isLoading, error } = useGetFilteredQuery({
         category: categories,
@@ -21,7 +23,18 @@ function TopRated({ selectedGenres }) {
         page,
     });
 
-    const filtered = useMemo(() => Array.isArray(data?.results) ? data.results : [], [data]);
+    useEffect(() => {
+        setPage(1);
+        setMovies([]);
+        setHasMore(true);
+    }, [categories, selectedGenres, years]);
+
+    useEffect(() => {
+        if (data?.results) {
+            setMovies((prev) => [...prev, ...data.results]);
+            if (data.results.length === 0) setHasMore(false); // Если данных нет, отключаем кнопку
+        }
+    }, [data]);
 
     const handleShowMore = () => setPage((prev) => prev + 1);
 
@@ -30,14 +43,14 @@ function TopRated({ selectedGenres }) {
             <h2 className="text-[#FDD835] text-[36px] my-5">{t("advanced_search")}</h2>
 
             <section className="grid grid-cols-5 gap-y-[100px] justify-items-center w-full">
-                {isLoading ? (
+                {isLoading && page === 1 ? (
                     <p className="text-white text-center">Загрузка...</p>
                 ) : error ? (
                     <p className="text-red-500 text-center">Ошибка загрузки данных</p>
-                ) : filtered.length === 0 ? (
+                ) : movies.length === 0 ? (
                     <p className="text-white text-center">{t("no_results")}</p>
                 ) : (
-                    filtered.map((movie) => (
+                    movies.map((movie) => (
                         <Movie
                             key={movie.id}
                             item={movie}
@@ -48,7 +61,7 @@ function TopRated({ selectedGenres }) {
             </section>
 
             <div className="w-full flex justify-center mt-[56px]">
-                {filtered.length > 0 && (
+                {hasMore && movies.length > 0 && (
                     <button
                         onClick={handleShowMore}
                         disabled={isLoading}
@@ -63,6 +76,3 @@ function TopRated({ selectedGenres }) {
 }
 
 export default TopRated;
-
-
-

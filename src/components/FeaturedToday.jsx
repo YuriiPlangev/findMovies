@@ -11,8 +11,9 @@ import { changeCategoriesToMovies, changeCategoriesToSeries } from "../redux/cat
 import { useGetTrendingMoviesQuery } from "../redux/movieApi"; 
 import FilteredButton from "./FilteredButton";
 import MovieSkeleton from "../skeletons/MovieSkeleton";
-import "../i18next";
+import "../App/i18next";
 import { useTranslation } from "react-i18next";
+import UpButton from "./UpButton";
 
 function FeaturedToday() {
     const { t } = useTranslation();
@@ -20,7 +21,6 @@ function FeaturedToday() {
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
-    // ✅ Используем RTK Query
     const { data: movies, isLoading, error } = useGetTrendingMoviesQuery(categories);
 
     const mediaType = categories === "Movies" ? "movie" : "tv";

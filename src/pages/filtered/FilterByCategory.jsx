@@ -1,9 +1,9 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useSelector } from "react-redux";
-import { useGetGenresQuery } from "../redux/movieApi"; // ✅ Используем RTK Query
-import TopRated from "../components/TopRated";
-import FilterNav from "../components/FilterNav";
-import YearsSlider from "../components/YearsSlider";
+import { useGetGenresQuery } from "../../redux/movieApi"; // ✅ Используем RTK Query
+import TopRated from "../../components/TopRated";
+import FilterNav from "../../components/FilterNav";
+import YearsSlider from "../../components/YearsSlider";
 
 function FilterByCategory() {
     const categories = useSelector((state) => state.categories.category);
@@ -11,8 +11,19 @@ function FilterByCategory() {
     const [showGenres, setShowGenres] = useState(false);
     const [showYears, setShowYears] = useState(false);
     const genresRef = useRef(null);
-
     const { data, isLoading, error } = useGetGenresQuery();
+
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (genresRef.current && !genresRef.current.contains(event.target)) {
+                setShowGenres(false);
+            }
+        };
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, []);
 
     const toggleGenres = () => {
         setShowGenres((prev) => !prev);

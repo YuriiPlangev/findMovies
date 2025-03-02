@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useGetVideoQuery } from "../redux/movieApi"; 
+import PlayIcon from "../assets/icon/PlayIcon";
 
 function Trailer({ id, type }) {
     const { t } = useTranslation();
@@ -39,9 +40,7 @@ function Trailer({ id, type }) {
         <>
             {trailer && (
                 <button onClick={handleGetTrailer} className="text-white cursor-pointer active:scale-[0.9] border-[#FDD835] border-1 rounded-lg py-2 px-3 mt-2 inline-flex items-center gap-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
-                        <path d="M8 5v14l11-7z" />
-                    </svg>
+                    <PlayIcon />
                     {t("watch_trailer")}
                 </button>
             )}

@@ -1,13 +1,18 @@
-import { useGetMovieCreditsQuery } from "../redux/movieApi";
+import { useGetCreditsQuery } from "../redux/movieApi";
 import { useTranslation } from "react-i18next";
 import moviePlaceholder from '../assets/moviePlaceholder.jpg';
 
 function SearchResults({ movie, onClick }) {
 
     const { t } = useTranslation();
-    const { data: credits, isLoading } = useGetMovieCreditsQuery(movie.id);
+    const type = movie.media_type
+    const { data: credits, isLoading } = useGetCreditsQuery({ type, id: movie.id });
 
     const actors = credits?.cast?.slice(0, 3).map(actor => actor.name).join(", ") || "Нет данных";
+    console.log(type);
+    console.log(credits);
+    
+    
 
     return (
         <article onClick={onClick} className="h-[110px] w-full p-[12px] flex gap-5 cursor-pointer bg-[#212121]">
