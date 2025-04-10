@@ -46,10 +46,6 @@ button {
     color: #747bff;
   }
 
-
-  .clip-custom {
-    clip-path: polygon(100% 0, 90% 100%, 0% 100%, 0 51%, 0% 0%);
-  }
   .swiper {
     height: 430px;
   }

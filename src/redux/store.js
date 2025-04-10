@@ -2,7 +2,7 @@ import { configureStore } from '@reduxjs/toolkit';
 import categoriesReducer from "./categoriesSlice"
 import releaseYearsReducer from './ReleaseYearSlice';
 
-import { movieApi } from "./movieApi";
+import { movieApi } from "../shared/Api/movieApi";  
 
 const store = configureStore({
   reducer: {
