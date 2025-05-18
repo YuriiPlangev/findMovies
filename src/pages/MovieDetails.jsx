@@ -58,8 +58,6 @@ function MovieDetails() {
         </div>
     ));
 
-
-    console.log(movie.credits);
     
     return (
         <>

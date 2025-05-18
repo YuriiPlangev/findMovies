@@ -16,7 +16,7 @@ function Search() {
 
     const { data, isLoading, error } = useGetSearchResultQuery(query, {
         skip: !query.trim(),
-    });
+    },);
 
     const searchResults = Array.isArray(data?.results) ? data.results : [];
 
@@ -76,6 +76,7 @@ function Search() {
                         <SearchResults
                             key={movie.id}
                             movie={movie}
+                            
                             onClick={() => handleMovieClick(movie, movie.media_type)}
                         />
                     ))

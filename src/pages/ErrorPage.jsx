@@ -1,4 +1,3 @@
-import { useNavigate } from "react-router-dom";
 import { Component } from "react";
 import ErrorIcon from "../shared/assets/icon/ErrorIcon";
 

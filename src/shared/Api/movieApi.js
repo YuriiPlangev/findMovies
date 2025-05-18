@@ -1,8 +1,12 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import i18n from "../../App/i18next"
 
+const token = import.meta.env.VITE_TMDB_TOKEN
+
 const API_URL = "https://api.themoviedb.org/3";
-const API_TOKEN = "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI0MjIzYzY0NjgyNTViZmM3ZmYwNDE4NDhjNzE3MjFkOCIsIm5iZiI6MTczODE2NzAyNi4xMiwic3ViIjoiNjc5YTUyZjJmYzE0ZDI0ZTM1YTk3ZTM2Iiwic2NvcGVzIjpbImFwaV9yZWFkIl0sInZlcnNpb24iOjF9.E4f9IoqSvOvMwoQZ2Sh5STg-c6uV1ZkcR1P20xIIC6Y"; // 🔹 Укажи свой API-токен
+const API_TOKEN = token
+
+
 
 export const movieApi = createApi({
   reducerPath: "movieApi",
@@ -35,10 +39,10 @@ export const movieApi = createApi({
     
     getMovieDetails: builder.query({
       query: ({ id, type }) => {
-        const lang = i18n.language === "ua" ? "uk-UA" : "en-US"; // ✅ Динамическое обновление языка
-        return `/${type}/${id}?language=${lang}&append_to_response=credits`; // ✅ Объединяем запросы
+        const lang = i18n.language === "ua" ? "uk-UA" : "en-US"; 
+        return `/${type}/${id}?language=${lang}&append_to_response=credits`; 
       },
-      providesTags: ["MovieDetails"], // ✅ Позволяет обновлять данные при смене языка
+      providesTags: ["MovieDetails"], 
     }),
 
 

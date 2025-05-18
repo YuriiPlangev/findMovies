@@ -7,17 +7,17 @@ function SearchResults({ movie, onClick }) {
     const { t } = useTranslation();
     const type = movie.media_type
     const { data: credits, isLoading } = useGetCreditsQuery({ type, id: movie.id });
+    const poster = movie.poster_path || movie.profile_path
 
     const actors = credits?.cast?.slice(0, 3).map(actor => actor.name).join(", ") || "Нет данных";
-    console.log(type);
-    console.log(credits);
+
     
     
 
     return (
         <article onClick={onClick} className="h-[110px] w-full p-[12px] flex gap-5 cursor-pointer bg-[#212121]">
             <img
-                src={movie.poster_path ? `https://image.tmdb.org/t/p/w500${movie.poster_path}` : moviePlaceholder}
+                src={poster ? `https://image.tmdb.org/t/p/w500${poster}` : moviePlaceholder}
                 alt={movie.title || movie.name}
                 className="h-full w-[55px]"
             />

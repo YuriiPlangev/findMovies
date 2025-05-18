@@ -8,12 +8,10 @@ const useLanguageChange = () => {
 
   useEffect(() => {
     const handleLanguageChange = (lng) => {
-      console.log(`🌐 Язык изменен на: ${lng}`);
       dispatch(fetchMovies()); 
     };
 
     i18n.on('languageChanged', handleLanguageChange);
-
     return () => {
       i18n.off('languageChanged', handleLanguageChange);
     };
